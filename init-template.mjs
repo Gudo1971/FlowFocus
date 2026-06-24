@@ -27,8 +27,14 @@ function toTitleCase(value) {
     .join(" ");
 }
 
+function updateJson(filePath, updater) {
+  const json = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+  updater(json);
+  fs.writeFileSync(filePath, JSON.stringify(json, null, 2) + "\n");
+}
+
 async function init() {
-  console.log("\n🚀 Chakra UI v3 Template Initialization\n");
+  console.log("\nMonorepo template initialization\n");
 
   const projectNameRaw = await question(
     "Project name (lowercase, no spaces): ",
@@ -39,7 +45,7 @@ async function init() {
   const projectName = projectNameRaw.trim();
   if (!/^[a-z0-9-]+$/.test(projectName)) {
     console.error(
-      "\n❌ Invalid project name. Use lowercase letters, numbers, and dashes only.\n",
+      "\nInvalid project name. Use lowercase letters, numbers, and dashes only.\n",
     );
     rl.close();
     process.exit(1);
@@ -47,27 +53,30 @@ async function init() {
 
   const projectTitle = toTitleCase(projectName);
 
-  console.log("\n📝 Updating files...\n");
+  console.log("\nUpdating files...\n");
 
-  // Update package.json
-  const pkgPath = path.join(process.cwd(), "package.json");
-  const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf-8"));
-  pkg.name = projectName;
-  pkg.description = projectDesc;
-  pkg.author = author;
-  fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + "\n");
-  console.log(`✅ package.json: name="${projectName}"`);
+  const rootPkgPath = path.join(process.cwd(), "package.json");
+  updateJson(rootPkgPath, (pkg) => {
+    pkg.name = projectName;
+  });
+  console.log(`Updated root package.json: name="${projectName}"`);
 
-  // Update index.html
-  const htmlPath = path.join(process.cwd(), "index.html");
+  const frontendPkgPath = path.join(process.cwd(), "frontend", "package.json");
+  updateJson(frontendPkgPath, (pkg) => {
+    pkg.description = projectDesc;
+    pkg.author = author;
+  });
+  console.log("Updated frontend/package.json metadata");
+
+  const htmlPath = path.join(process.cwd(), "frontend", "index.html");
   let html = fs.readFileSync(htmlPath, "utf-8");
   html = html.replace(/<title>.*?<\/title>/, `<title>${projectTitle}</title>`);
   fs.writeFileSync(htmlPath, html);
-  console.log(`✅ index.html: <title>${projectTitle}</title>`);
+  console.log(`Updated frontend/index.html: <title>${projectTitle}</title>`);
 
-  // Update Header.tsx
   const headerPath = path.join(
     process.cwd(),
+    "frontend",
     "src",
     "components",
     "Header.tsx",
@@ -75,27 +84,23 @@ async function init() {
   let header = fs.readFileSync(headerPath, "utf-8");
   header = header.replace(/FocusFlow/g, projectTitle);
   fs.writeFileSync(headerPath, header);
-  console.log(`✅ Header.tsx: Updated branding`);
+  console.log("Updated frontend branding in Header.tsx");
 
-  // Update README title/branding
   const readmePath = path.join(process.cwd(), "README.md");
   if (fs.existsSync(readmePath)) {
     let readme = fs.readFileSync(readmePath, "utf-8");
-    readme = readme.replace(
-      /^#\s+.*$/m,
-      `# ${projectTitle} - Chakra UI v3 Template`,
-    );
+    readme = readme.replace(/^#\s+.*$/m, `# ${projectTitle}`);
     readme = readme.replace(/FocusFlow/g, projectTitle);
     fs.writeFileSync(readmePath, readme);
-    console.log("✅ README.md: Updated title and branding");
+    console.log("Updated README.md branding");
   }
 
-  console.log("\n✨ Template initialized!\n");
-  console.log("📋 Next steps:");
+  console.log("\nTemplate initialized.\n");
+  console.log("Next steps:");
   console.log("  1. npm install");
-  console.log("  2. Update src/theme/index.ts with your brand colors");
+  console.log("  2. Update frontend/src/theme/index.ts with your brand colors");
   console.log("  3. npm run dev");
-  console.log("\n📚 See TEMPLATE.md for detailed customization guide\n");
+  console.log("\nSee TEMPLATE.md for detailed customization guidance.\n");
 
   rl.close();
 }

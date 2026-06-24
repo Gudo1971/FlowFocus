@@ -10,7 +10,7 @@ npm install
 npm run dev
 ```
 
-The wizard updates project metadata and branding in key files.
+The wizard updates project metadata and frontend branding in key files.
 
 ## Option 2: Manual Setup
 
@@ -22,9 +22,10 @@ npm install
 
 Then update:
 
-- `package.json` (`name`, `description`, `author`)
-- `index.html` (`<title>`)
-- `src/components/Header.tsx` (project name)
+- `package.json` (`name`)
+- `frontend/package.json` (`description`, `author`)
+- `frontend/index.html` (`<title>`)
+- `frontend/src/components/Header.tsx` (project name)
 - `README.md` (project title and summary)
 
 ## Run Checks
@@ -33,6 +34,13 @@ Then update:
 npm run typecheck
 npm run lint
 npm run build
+```
+
+## Workspace Commands
+
+```bash
+npm run dev:frontend
+npm run dev:backend
 ```
 
 ## Template Cleanup (Optional)
