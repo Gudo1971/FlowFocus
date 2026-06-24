@@ -1,11 +1,21 @@
-## 🎯 Template-only File
+## Template Init Notes
 
-Remove this file after running template initialization:
+Run the wizard:
+
 ```bash
-node init-template.mjs
+npm run init
 ```
 
-Then delete this file:
+Optional cleanup after initialization.
+
+For Bash:
+
 ```bash
-rm init-template.mjs TEMPLATE-INIT-README.md
+rm TEMPLATE-INIT-README.md QUICK-START.md TEMPLATE.md
+```
+
+For PowerShell:
+
+```powershell
+Remove-Item TEMPLATE-INIT-README.md, QUICK-START.md, TEMPLATE.md
 ```

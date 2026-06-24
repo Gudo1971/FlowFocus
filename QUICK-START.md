@@ -1,26 +1,18 @@
-# ⚡ Quick Start – Template Use
+# Quick Start
 
-## Optie 1: Via Node.js Script (Aanbevolen)
+## Option 1: Use The Init Wizard (Recommended)
 
 ```bash
-# 1. Clone template
 git clone <repo-url> my-project
 cd my-project
-
-# 2. Run template init script
-node init-template.mjs
-
-# 3. Follow prompts (project name, description, author)
-
-# 4. Clean up
+npm run init
 npm install
-rm init-template.mjs TEMPLATE-INIT-README.md QUICK-START.md
-
-# 5. Start coding
 npm run dev
 ```
 
-## Optie 2: Handmatig
+The wizard updates project metadata and branding in key files.
+
+## Option 2: Manual Setup
 
 ```bash
 git clone <repo-url> my-project
@@ -28,78 +20,37 @@ cd my-project
 npm install
 ```
 
-Then manually edit:
-- `package.json` → name, description, author
-- `index.html` → title
-- `src/components/Header.tsx` → "FocusFlow" → your project name
-- `src/theme/index.ts` → brand colors
+Then update:
 
-## Optie 3: GitHub Template Button
+- `package.json` (`name`, `description`, `author`)
+- `index.html` (`<title>`)
+- `src/components/Header.tsx` (project name)
+- `README.md` (project title and summary)
 
-1. Go to this repo on GitHub
-2. Click **"Use this template"** → **"Create a new repository"**
-3. Clone your new repo
-4. Run `node init-template.mjs`
-
----
-
-## 🎨 Customize Theme
-
-Edit **src/theme/index.ts**:
-
-```typescript
-const customConfig = defineConfig({
-  theme: {
-    semanticTokens: {
-      colors: {
-        bg: {
-          page: { value: { base: "purple.50", _dark: "purple.900" } },
-          surface: { value: { base: "white", _dark: "purple.800" } },
-        },
-        text: {
-          primary: { value: { base: "purple.900", _dark: "purple.100" } },
-        },
-        accent: {
-          primary: { value: { base: "purple.600", _dark: "purple.400" } },
-        },
-      },
-    },
-  },
-});
-```
-
-## 🚀 Development
+## Run Checks
 
 ```bash
-npm run dev      # Start dev server
-npm run build    # Production build
-npm run lint     # Check code
-npm run preview  # Test build
+npm run typecheck
+npm run lint
+npm run build
 ```
 
-## 📁 File Structure
+## Template Cleanup (Optional)
 
-```
-src/
-├── components/          # Your components
-├── theme/
-│   ├── index.ts        # Theme config
-│   ├── tokens/
-│   │   ├── colors.ts
-│   │   └── semantic.ts (light/dark mode)
-│   └── recipes/
-├── App.tsx
-└── main.tsx
+After initialization, you can remove template-only docs.
+
+For Bash:
+
+```bash
+rm QUICK-START.md TEMPLATE.md TEMPLATE-INIT-README.md
 ```
 
-## 💡 Key Features
+For PowerShell:
 
-✅ Chakra UI v3 with semantic tokens  
-✅ Dark/Light mode toggle  
-✅ TypeScript support  
-✅ ESLint configured  
-✅ Ready for production  
+```powershell
+Remove-Item QUICK-START.md, TEMPLATE.md, TEMPLATE-INIT-README.md
+```
 
----
+## Next
 
-See **TEMPLATE.md** for detailed customization guide.
+See `TEMPLATE.md` for the full customization guide.
