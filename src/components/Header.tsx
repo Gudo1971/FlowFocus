@@ -1,7 +1,14 @@
-import { Box, Flex, Heading, HStack } from "@chakra-ui/react";
+import { Box, Flex, Heading, HStack, Text, VStack } from "@chakra-ui/react";
 import { ColorModeButton } from "./ColorModeButton";
 
 export function Header() {
+  const today = new Date().toLocaleDateString("nl-NL", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
   return (
     <Box
       as="header"
@@ -18,7 +25,17 @@ export function Header() {
         <Heading size="md" color="text.primary">
           FocusFlow
         </Heading>
-        <HStack gap={4}>
+        {/*right side: greeting + themee toglle */}
+        <HStack gap={6}>
+          <VStack gap={1} align="flex-end">
+            <Text fontSize="sm" color="text.muted">
+              Goedemorgen, Gudo 👋
+            </Text>
+            <Text fontSize="xs" color="text.subtle">
+              {today}
+            </Text>
+          </VStack>
+
           <ColorModeButton />
         </HStack>
       </Flex>
