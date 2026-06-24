@@ -9,15 +9,17 @@ export type FocusSession = {
 };
 
 export function useFocusHistory() {
-  const [sessions, setSessions] = useState<FocusSession[]>([]);
-
-  // Load from localStorage
-  useEffect(() => {
+  const [sessions, setSessions] = useState<FocusSession[]>(() => {
+    if (typeof window === "undefined") return [];
     const stored = localStorage.getItem("focusHistory");
-    if (stored) {
-      setSessions(JSON.parse(stored));
+    if (!stored) return [];
+
+    try {
+      return JSON.parse(stored) as FocusSession[];
+    } catch {
+      return [];
     }
-  }, []);
+  });
 
   // Save to localStorage
   useEffect(() => {

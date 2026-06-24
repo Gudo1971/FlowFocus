@@ -20,31 +20,31 @@ export function FocusTimer() {
     if (!running) return;
 
     const interval = setInterval(() => {
-      setSeconds((prev) => Math.max(prev - 1, 0));
+      setSeconds((prev) => {
+        if (prev > 1) return prev - 1;
+
+        // Timer reached zero: stop and persist completed session
+        clearInterval(interval);
+        dingSound.currentTime = 0;
+        void dingSound.play();
+        setRunning(false);
+
+        if (startTime) {
+          addSession({
+            id: crypto.randomUUID(),
+            start: startTime,
+            end: Date.now(),
+            duration: preset,
+            preset,
+          });
+        }
+
+        return 0;
+      });
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [running]);
-
-  // Play sound + log session when timer hits zero
-  useEffect(() => {
-    if (seconds === 0 && running) {
-      dingSound.currentTime = 0;
-      dingSound.play();
-      setRunning(false);
-
-      // Sessie opslaan
-      if (startTime) {
-        addSession({
-          id: crypto.randomUUID(),
-          start: startTime,
-          end: Date.now(),
-          duration: preset,
-          preset: preset,
-        });
-      }
-    }
-  }, [seconds, running]);
+  }, [addSession, preset, running, startTime]);
 
   // Format mm:ss
   const minutes = Math.floor(seconds / 60);
