@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Heading, Text, Input } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
 // Audio object buiten de component (voorkomt herladen)
@@ -18,7 +18,7 @@ export function FocusTimer() {
   // -----------------------------
   // ⭐ Sessie opslaan in backend
   // -----------------------------
-  async function saveSession() {
+  const saveSession = useCallback(async () => {
     if (!startTime) return;
 
     const startAt = new Date(startTime).toISOString();
@@ -38,7 +38,7 @@ export function FocusTimer() {
 
     // Dashboard realtime refresh
     queryClient.invalidateQueries({ queryKey: ["sessions"] });
-  }
+  }, [preset, queryClient, startTime]);
 
   // -----------------------------
   // ⭐ Countdown effect
@@ -63,7 +63,7 @@ export function FocusTimer() {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [running, preset, startTime]);
+  }, [running, saveSession]);
 
   // Format mm:ss
   const minutes = Math.floor(seconds / 60);
