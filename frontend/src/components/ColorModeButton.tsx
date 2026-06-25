@@ -34,7 +34,7 @@ export function ColorModeButton() {
   return (
     <Button
       onClick={handleCycleMode}
-      variant="ghost"
+      variant="solid"
       size="lg"
       fontSize="xl"
       title={`Modus: ${label}`}

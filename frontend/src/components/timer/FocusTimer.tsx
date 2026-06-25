@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Heading, Text, Input } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
-import { useFocusHistory } from "../../hooks/useFocusHistory";
+import { useQueryClient } from "@tanstack/react-query";
 
 // Audio object buiten de component (voorkomt herladen)
 const dingSound = new Audio("/sounds/ding.mp3");
@@ -13,9 +13,36 @@ export function FocusTimer() {
   const [startTime, setStartTime] = useState<number | null>(null);
   const [customMinutes, setCustomMinutes] = useState<number>(0);
 
-  const { addSession } = useFocusHistory();
+  const queryClient = useQueryClient();
 
-  // Countdown effect
+  // -----------------------------
+  // ⭐ Sessie opslaan in backend
+  // -----------------------------
+  async function saveSession() {
+    if (!startTime) return;
+
+    const startAt = new Date(startTime).toISOString();
+    const endAt = new Date().toISOString();
+    const duration = Math.round((Date.now() - startTime) / 60000);
+
+    await fetch("http://localhost:3001/sessions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        startAt,
+        endAt,
+        duration,
+        preset: preset / 60,
+      }),
+    });
+
+    // Dashboard realtime refresh
+    queryClient.invalidateQueries({ queryKey: ["sessions"] });
+  }
+
+  // -----------------------------
+  // ⭐ Countdown effect
+  // -----------------------------
   useEffect(() => {
     if (!running) return;
 
@@ -23,28 +50,20 @@ export function FocusTimer() {
       setSeconds((prev) => {
         if (prev > 1) return prev - 1;
 
-        // Timer reached zero: stop and persist completed session
+        // Timer reached zero
         clearInterval(interval);
         dingSound.currentTime = 0;
         void dingSound.play();
         setRunning(false);
 
-        if (startTime) {
-          addSession({
-            id: crypto.randomUUID(),
-            start: startTime,
-            end: Date.now(),
-            duration: preset,
-            preset,
-          });
-        }
+        void saveSession();
 
         return 0;
       });
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [addSession, preset, running, startTime]);
+  }, [running, preset, startTime]);
 
   // Format mm:ss
   const minutes = Math.floor(seconds / 60);
@@ -58,6 +77,9 @@ export function FocusTimer() {
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference * (1 - progress);
 
+  // -----------------------------
+  // ⭐ Preset toepassen
+  // -----------------------------
   function applyPreset(mins: number) {
     if (!mins || mins <= 0) return;
     const newSeconds = mins * 60;
@@ -164,7 +186,10 @@ export function FocusTimer() {
 
           <Button
             colorScheme="red"
-            onClick={() => setRunning(false)}
+            onClick={() => {
+              setRunning(false);
+              void saveSession();
+            }}
             disabled={!running}
           >
             Stop

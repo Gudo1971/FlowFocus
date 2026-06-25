@@ -1,12 +1,8 @@
-import express from 'express'
+import { app } from "./app.js";
+import { config } from "./config/env.js";
 
-const app = express()
-const port = Number(process.env.PORT ?? 3001)
+const PORT = config.PORT;
 
-app.get('/health', (_request, response) => {
-  response.json({ status: 'ok' })
-})
-
-app.listen(port, () => {
-  console.log(`FocusFlow backend listening on port ${port}`)
-})
+app.listen(PORT, () => {
+  console.log(`Backend running on port ${PORT}`);
+});

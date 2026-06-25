@@ -7,11 +7,15 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { useWeeklyData } from "../../hooks/useWeeklyData";
-import type { WeeklyDayData } from "../../types/weekly";
+
+import { useSessionsQuery } from "../../hooks/useSessionsQuery";
+import { useFocusTrend } from "../../hooks/useFocusTrend";
+import { usePeriodFilter } from "../../context/PeriodFilterContext";
 
 export function FocusTrendChart() {
-  const data: WeeklyDayData[] = useWeeklyData();
+  const { from, to } = usePeriodFilter();
+  const { data: sessions = [] } = useSessionsQuery(from, to);
+  const trend = useFocusTrend(sessions);
 
   return (
     <Box bg="bg.surface" borderWidth="1px" borderRadius="lg" p={6}>
@@ -20,7 +24,7 @@ export function FocusTrendChart() {
       </Heading>
 
       <ResponsiveContainer width="100%" height={250}>
-        <LineChart data={data}>
+        <LineChart data={trend}>
           <XAxis dataKey="date" />
           <YAxis />
           <Tooltip

@@ -9,9 +9,12 @@ import {
 } from "recharts";
 import { useWeeklyData } from "../../hooks/useWeeklyData";
 import type { WeeklyDayData } from "../../types/weekly";
-
+import { useSessionsQuery } from "../../hooks/useSessionsQuery";
+import { usePeriodFilter } from "../../context/PeriodFilterContext";
 export function EfficiencyChart() {
-  const data: WeeklyDayData[] = useWeeklyData().map((d) => ({
+  const { from, to } = usePeriodFilter();
+  const { data: sessions = [] } = useSessionsQuery(from, to);
+  const data: WeeklyDayData[] = useWeeklyData(sessions).map((d) => ({
     ...d,
     efficiency: d.sessions === 0 ? 0 : d.totalMinutes / d.sessions,
   }));
@@ -27,7 +30,11 @@ export function EfficiencyChart() {
           <XAxis dataKey="date" />
           <YAxis />
           <Tooltip
-            formatter={(value) => typeof value === "number" ? `${value.toFixed(1)} min/sessie` : value}
+            formatter={(value) =>
+              typeof value === "number"
+                ? `${value.toFixed(1)} min/sessie`
+                : value
+            }
           />
           <Bar dataKey="efficiency" fill="#48BB78" radius={[4, 4, 0, 0]} />
         </BarChart>

@@ -12,7 +12,7 @@ export function Header() {
   return (
     <Box
       as="header"
-      bg="bg.surface"
+      bg={{ base: "white", _dark: "gray.800" }}
       borderBottomWidth="1px"
       borderColor="border.subtle"
       py={4}

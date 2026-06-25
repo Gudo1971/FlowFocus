@@ -7,11 +7,15 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { useSessionsQuery } from "../../hooks/useSessionsQuery";
 import { useWeeklyData } from "../../hooks/useWeeklyData";
 import type { WeeklyDayData } from "../../types/weekly";
+import { usePeriodFilter } from "../../context/PeriodFilterContext";
 
 export function DailySessionsChart() {
-  const data: WeeklyDayData[] = useWeeklyData();
+  const { from, to } = usePeriodFilter();
+  const { data: sessions = [] } = useSessionsQuery(from, to);
+  const data: WeeklyDayData[] = useWeeklyData(sessions);
 
   return (
     <Box bg="bg.surface" borderWidth="1px" borderRadius="lg" p={6}>

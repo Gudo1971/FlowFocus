@@ -1,26 +1,29 @@
-import { useFocusHistory } from "./useFocusHistory";
+import { useMemo } from "react";
+import type { Session } from "../types/session";
 import type { WeeklyDayData } from "../types/weekly";
 
-export function useWeeklyData(): WeeklyDayData[] {
-  const { sessions } = useFocusHistory();
+export function useWeeklyData(sessions: Session[]): WeeklyDayData[] {
+  return useMemo(() => {
+    if (!sessions || sessions.length === 0) return [];
 
-  const grouped: Record<string, WeeklyDayData> = {};
+    const map: Record<string, WeeklyDayData> = {};
 
-  for (const s of sessions) {
-    const day = new Date(s.start).toISOString().slice(0, 10);
+    sessions.forEach((s) => {
+      const date = s.startAt.split("T")[0];
 
-    if (!grouped[day]) {
-      grouped[day] = {
-        date: day,
-        totalMinutes: 0,
-        sessions: 0,
-        efficiency: 0, // ← verplicht door jouw type
-      };
-    }
+      if (!map[date]) {
+        map[date] = {
+          date,
+          sessions: 0,
+          totalMinutes: 0,
+          efficiency: 0,
+        };
+      }
 
-    grouped[day].totalMinutes += s.duration / 60;
-    grouped[day].sessions += 1;
-  }
+      map[date].sessions += 1;
+      map[date].totalMinutes += s.duration;
+    });
 
-  return Object.values(grouped);
+    return Object.values(map).sort((a, b) => a.date.localeCompare(b.date));
+  }, [sessions]);
 }

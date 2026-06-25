@@ -1,0 +1,19 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model FocusSession {
+  id        String   @id @default(cuid())
+  startAt   DateTime
+  endAt     DateTime
+  duration  Int
+  preset    Int
+  createdAt DateTime @default(now())
+
+  @@index([startAt])
+}

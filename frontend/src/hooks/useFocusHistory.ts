@@ -1,21 +1,14 @@
 import { useEffect, useState } from "react";
-
-export type FocusSession = {
-  id: string;
-  start: number; // timestamp
-  end: number; // timestamp
-  duration: number; // in seconds
-  preset: number; // in seconds
-};
+import type { FocusHistorySession } from "../types/session";
 
 export function useFocusHistory() {
-  const [sessions, setSessions] = useState<FocusSession[]>(() => {
+  const [sessions, setSessions] = useState<FocusHistorySession[]>(() => {
     if (typeof window === "undefined") return [];
     const stored = localStorage.getItem("focusHistory");
     if (!stored) return [];
 
     try {
-      return JSON.parse(stored) as FocusSession[];
+      return JSON.parse(stored) as FocusHistorySession[];
     } catch {
       return [];
     }
@@ -26,7 +19,7 @@ export function useFocusHistory() {
     localStorage.setItem("focusHistory", JSON.stringify(sessions));
   }, [sessions]);
 
-  function addSession(session: FocusSession) {
+  function addSession(session: FocusHistorySession) {
     setSessions((prev) => [...prev, session]);
   }
 
