@@ -9,11 +9,13 @@ import {
 } from "recharts";
 import { useWeeklyData } from "../../hooks/useWeeklyData";
 import type { WeeklyDayData } from "../../types/weekly";
-import { useSessionsQuery } from "../../hooks/useSessionsQuery";
-import { usePeriodFilter } from "../../context/PeriodFilterContext";
-export function EfficiencyChart() {
-  const { from, to } = usePeriodFilter();
-  const { data: sessions = [] } = useSessionsQuery(from, to);
+import type { Session } from "../../types/session";
+
+type Props = {
+  sessions: Session[];
+};
+
+export function EfficiencyChart({ sessions }: Props) {
   const data: WeeklyDayData[] = useWeeklyData(sessions).map((d) => ({
     ...d,
     efficiency: d.sessions === 0 ? 0 : d.totalMinutes / d.sessions,

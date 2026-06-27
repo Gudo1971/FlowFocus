@@ -1,3 +1,8 @@
+// ---------------------------------------------
+// DashboardPage
+// Displays metrics, charts, timer, tasks, and session list
+// ---------------------------------------------
+
 import { Box, Grid, Heading } from "@chakra-ui/react";
 import { MetricCard } from "../components/cards/MetricCard";
 import { TasksSection } from "../components/tasks/TasksSection";
@@ -14,14 +19,24 @@ import { usePeriodFilter } from "../context/PeriodFilterContext";
 import { PeriodFilter } from "../components/filters/PeriodFilter";
 
 export function DashboardPage() {
+  // ---------------------------------------------
+  // Filters and data loading
+  // ---------------------------------------------
   const { from, to } = usePeriodFilter();
   const { data: sessions = [], isLoading } = useSessionsQuery(from, to);
-  const { data: allSessions = [] } = useSessionsQuery(); // ongefilterd, voor streak
-  const { currentStreak, longestStreak } = useStreak(allSessions);
+
+  // ---------------------------------------------
+  // Streak calculation
+  // ---------------------------------------------
+  const { currentStreak, longestStreak } = useStreak(sessions);
+
   if (isLoading) {
     return <Heading size="md">Gegevens laden...</Heading>;
   }
 
+  // ---------------------------------------------
+  // Metrics calculation
+  // ---------------------------------------------
   const totalMinutes = sessions.reduce(
     (sum: number, s: Session) => sum + s.duration,
     0,
@@ -37,6 +52,9 @@ export function DashboardPage() {
       ? `${totalHours}h ${remainingMinutes}m`
       : `${remainingMinutes}m`;
 
+  // ---------------------------------------------
+  // Render
+  // ---------------------------------------------
   return (
     <Box
       as="main"
@@ -48,12 +66,14 @@ export function DashboardPage() {
       flexDirection="column"
       gap={10}
     >
-      {/* Title */}
+      {/* Page title */}
       <Heading size="lg" color="text.primary">
         Jouw dag in focus
       </Heading>
+
       <PeriodFilter />
-      {/* Metrics row */}
+
+      {/* Metrics */}
       <Grid
         templateColumns={{
           base: "1fr",
@@ -90,6 +110,8 @@ export function DashboardPage() {
           sublabel={`Longest: ${longestStreak}`}
         />
       </Grid>
+
+      {/* Session list */}
       <Box>
         <Heading size="md" mb={4}>
           Jouw sessies
@@ -97,22 +119,22 @@ export function DashboardPage() {
         <SessionList sessions={sessions} />
       </Box>
 
-      {/* Tasks + Timer */}
+      {/* Tasks and timer */}
       <Grid templateColumns={{ base: "1fr", lg: "2fr 1fr" }} gap={6}>
         <TasksSection />
         <FocusTimer />
       </Grid>
 
-      {/* Weekly Overview */}
+      {/* Weekly overview */}
       <Box>
-        <WeeklyOverview />
+        <WeeklyOverview sessions={sessions} />
       </Box>
 
-      {/* Analytics row */}
+      {/* Analytics charts */}
       <Grid templateColumns={{ base: "1fr", lg: "repeat(3, 1fr)" }} gap={6}>
-        <DailySessionsChart />
-        <FocusTrendChart />
-        <EfficiencyChart />
+        <DailySessionsChart sessions={sessions} />
+        <FocusTrendChart sessions={sessions} />
+        <EfficiencyChart sessions={sessions} />
       </Grid>
     </Box>
   );

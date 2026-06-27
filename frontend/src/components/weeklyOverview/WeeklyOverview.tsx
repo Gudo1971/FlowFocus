@@ -7,14 +7,15 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { useSessionsQuery } from "../../hooks/useSessionsQuery";
 import { useWeeklyData } from "../../hooks/useWeeklyData";
 import type { WeeklyDayData } from "../../types/weekly";
-import { usePeriodFilter } from "../../context/PeriodFilterContext";
+import type { Session } from "../../types/session";
 
-export function WeeklyOverview() {
-  const { from, to } = usePeriodFilter();
-  const { data: sessions = [] } = useSessionsQuery(from, to);
+type Props = {
+  sessions: Session[];
+};
+
+export function WeeklyOverview({ sessions }: Props) {
   const data: WeeklyDayData[] = useWeeklyData(sessions);
 
   return (

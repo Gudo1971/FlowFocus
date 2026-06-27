@@ -8,13 +8,14 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-import { useSessionsQuery } from "../../hooks/useSessionsQuery";
 import { useFocusTrend } from "../../hooks/useFocusTrend";
-import { usePeriodFilter } from "../../context/PeriodFilterContext";
+import type { Session } from "../../types/session";
 
-export function FocusTrendChart() {
-  const { from, to } = usePeriodFilter();
-  const { data: sessions = [] } = useSessionsQuery(from, to);
+type Props = {
+  sessions: Session[];
+};
+
+export function FocusTrendChart({ sessions }: Props) {
   const trend = useFocusTrend(sessions);
 
   return (
