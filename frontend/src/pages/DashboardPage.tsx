@@ -17,7 +17,7 @@ import type { Session } from "../types/session";
 import { useStreak } from "../hooks/useStreak";
 import { usePeriodFilter } from "../context/PeriodFilterContext";
 import { PeriodFilter } from "../components/filters/PeriodFilter";
-
+import { HabitListForm } from "../components/forms/HabitListForm";
 export function DashboardPage() {
   // ---------------------------------------------
   // Filters and data loading
@@ -66,6 +66,7 @@ export function DashboardPage() {
       flexDirection="column"
       gap={10}
     >
+      <HabitListForm />
       {/* Page title */}
       <Heading size="lg" color="text.primary">
         Jouw dag in focus
